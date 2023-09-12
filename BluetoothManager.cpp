@@ -46,13 +46,13 @@ bool BluetoothManager::checkTheFinalPackage(int cnt){
   return false;
 }
 
-void BluetoothManager::writeInformation(int count){
+void BluetoothManager::writeInformation(int count, File file){
   for (int i = 0; i < count; i++) {
     file.write(dataBuffer[i]);
     //Serial.print(String((char)dataBuffer[i]));
   }
   SerialBT.print("DONE");
-  //file.flush();
+  file.flush();
 }
 
 void BluetoothManager::processingData(int count, File file){
@@ -71,17 +71,17 @@ void BluetoothManager::processingData(int count, File file){
     }
     else
       SerialBT.print("ERROR1\n");
-  } 
+  }
   else{
     if(lastPacket != 0){
       if(count == lastPacket){
-        writeInformation(count);
+        writeInformation(count, file);
       }
       else
         SerialBT.print("ERROR2\n");
     }
     else if (count == 512) {
-      writeInformation(count);
+      writeInformation(count, file);
     }
     else 
       SerialBT.print("ERROR3\n");

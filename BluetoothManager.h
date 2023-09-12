@@ -35,7 +35,7 @@ class BluetoothManager{
     int getNumberFromFrame(byte *buffer, int count);
     void processingData(int count, File file);
     bool checkTheFinalPackage(int cnt);
-    void writeInformation(int count);
+    void writeInformation(int count, File file);
 
   public:
     bool finishTransfer = false; 
