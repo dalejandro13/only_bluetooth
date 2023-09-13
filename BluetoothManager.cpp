@@ -2,6 +2,21 @@
 
 bool BluetoothManager::sendMsg = false;
 
+void BluetoothManager::initializeSD(){
+  if(SD.begin(5)){
+    player.cardExists = true;
+  }
+  player.initializeOut(26, 25, 27);
+  player.setTrackToPlay("/tracks/initial.mp3", 1); //reproducir audio
+}
+
+void BluetoothManager::openFile(){
+  file = SD.open(nameFile, FILE_WRITE);
+  // if(SD.remove("/output.tar.gz")){
+  //   Serial.println("borrado");
+  // }
+}
+
 void BluetoothManager::startBluetooth(){
   SerialBT.begin("ESP32_FTP");
   Serial.write(&"El dispositivo está listo para emparejar"[0]);
@@ -34,32 +49,32 @@ int BluetoothManager::getNumberFromFrame(byte *buffer, int count){
   return -1;
 }
 
-bool BluetoothManager::checkTheFinalPackage(int cnt){
-  if(cnt > 0){
-    for(int i = 0; i < cnt; i++){
-      if(dataBuffer[i] == 'F' && dataBuffer[i+1] == 'T' && dataBuffer[i+2] == '-' && dataBuffer[i+3] == 'S' && dataBuffer[i+4] == '*'){
-        lastPacket = 0;
-        return true;
-      }
-    }
-  }
-  return false;
-}
+// bool BluetoothManager::checkTheFinalPackage(int cnt){
+//   if(cnt > 0){
+//     for(int i = 0; i < cnt; i++){
+//       if(dataBuffer[i] == 'F' && dataBuffer[i+1] == 'T' && dataBuffer[i+2] == '-' && dataBuffer[i+3] == 'S' && dataBuffer[i+4] == '*'){
+//         lastPacket = 0;
+//         return true;
+//       }
+//     }
+//   }
+//   return false;
+// }
 
-void BluetoothManager::writeInformation(int count, File file){
+void BluetoothManager::writeInformation(int count){
   for (int i = 0; i < count; i++) {
     file.write(dataBuffer[i]);
     //Serial.print(String((char)dataBuffer[i]));
   }
   SerialBT.print("DONE");
-  file.flush();
+  //file.flush();
 }
 
-void BluetoothManager::processingData(int count, File file){
+void BluetoothManager::processingData(int count){
   // if(checkTheFinalPackage(count)){
   //   SerialBT.print("FT-S*");
   //   Serial.println("File transfer stopped");
-  //   //file.close();
+  //   file.close();
   //   sender.detach();
   //   return;
   // }
@@ -75,13 +90,13 @@ void BluetoothManager::processingData(int count, File file){
   else{
     if(lastPacket != 0){
       if(count == lastPacket){
-        writeInformation(count, file);
+        writeInformation(count);
       }
       else
         SerialBT.print("ERROR2\n");
     }
     else if (count == 512) {
-      writeInformation(count, file);
+      writeInformation(count);
     }
     else 
       SerialBT.print("ERROR3\n");
@@ -93,7 +108,7 @@ void BluetoothManager::check(){
   BluetoothManager::sendMsg = true;
 }
 
-void BluetoothManager::handleFileData(File file) {
+void BluetoothManager::handleFileData() {
   memset(dataBuffer, 0, SIZE); // Limpiar el buffer
   byteCount = 0; // Resetear el contador
 
@@ -104,10 +119,11 @@ void BluetoothManager::handleFileData(File file) {
     if (byteCount >= 5) { // Solo revisar si tenemos al menos 5 bytes en el buffer
       if (dataBuffer[byteCount - 5] == 'F' && dataBuffer[byteCount - 4] == 'T' && dataBuffer[byteCount - 3] == '-' && dataBuffer[byteCount - 2] == 'S' && dataBuffer[byteCount - 1] == '*') {
         SerialBT.print("FT-S*");
-        //Serial.println("File transfer stopped");
         lastPacket = 0;
         file.close();
+        isOpen = false;
         sender.detach();
+        player.setTrackToPlay(nameFile, 1); //reproducir audio
         return;
       }
     }
@@ -130,7 +146,11 @@ void BluetoothManager::handleFileData(File file) {
   //   }
   // }
   if(byteCount > 0){
-    processingData(byteCount, file);
+    if(!isOpen){
+      isOpen = true;
+      openFile();
+    }
+    processingData(byteCount);
   }
 
   

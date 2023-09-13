@@ -1,32 +1,20 @@
 #include "BluetoothManager.h"
+#include "mp3Player.h"
 
 BluetoothManager bt;
-
-bool readyCard = false;
-File file;
-
-void openFile(){
-  file = SD.open("/output.tar.gz", FILE_WRITE);
-  // if(SD.remove("/output.tar.gz")){
-  //   Serial.println("borrado");
-  // }
-}
-
-void initializeSD(){
-  if(SD.begin(5)){
-    readyCard = true;
-  }
-}
 
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(115200);
   bt.startBluetooth();
-  initializeSD();
-  openFile();
+  bt.initializeSD();
+  //bt.openFile();
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
-  bt.handleFileData(file);
+  if(!bt.player.notPlaying)
+    bt.player.playAudio();
+
+  bt.handleFileData();
 }

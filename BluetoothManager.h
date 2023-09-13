@@ -5,23 +5,26 @@
 #include <SD.h>
 #include <SPI.h>
 #include <Ticker.h>
+#include "mp3Player.h"
 #define COMMAND_LENGTH 5
 #define SIZE 515
 
 class BluetoothManager{
   private:
+    const String nameFile = "/record.mp3";
     
     BluetoothSerial SerialBT;
+    File file;
     int lastPacket = 0;
     byte cmdQueue[5] = { 0, 0, 0, 0, 0 };
     int bufferIndex = 0;
     //byte buffer[COMMAND_LENGTH];
-    Ticker sender;
+    Ticker sender, waitForPlay;
 
     byte dataBuffer[SIZE];
     int byteCount = 0;
 
-
+    bool isOpen = false;
     //String actualPath = "/";
     String fileToOperate = "";
     bool fileCreated = false;
@@ -33,17 +36,21 @@ class BluetoothManager{
     
     void retrieveFile();
     int getNumberFromFrame(byte *buffer, int count);
-    void processingData(int count, File file);
-    bool checkTheFinalPackage(int cnt);
-    void writeInformation(int count, File file);
+    void processingData(int count);
+    //bool checkTheFinalPackage(int cnt);|
+    void writeInformation(int count);
 
   public:
+    Mp3Player player = Mp3Player(true);
     bool finishTransfer = false; 
     void serialBTAvailable();
     void startBluetooth();
-    void handleFileData(File file);
+    void handleFileData();
     static void check();
     static bool sendMsg;
+    static void setTrack();
+    void openFile();
+    void initializeSD();
 };
 
 #endif
