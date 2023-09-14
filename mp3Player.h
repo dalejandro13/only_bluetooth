@@ -4,7 +4,10 @@
 #include <AudioFileSourceSD.h>
 //#include <AudioOutputI2SNoDAC.h>
 #include <AudioOutputI2S.h>
-#include <AudioGeneratorMP3.h>
+
+//#include <AudioGeneratorMP3.h>
+#include "AudioGeneratorAAC.h"
+//#include "AudioGeneratorFLAC.h"
 
 #define DEFAULT_SAMPLE_RATE 44100
 #define DEFAULT_BITS 16;
@@ -15,7 +18,10 @@ class Mp3Player
   private:
       String printFormat = "[MP3]: ";
       AudioFileSourceSD *file;
-      AudioGeneratorMP3 *mp3;
+      //AudioGeneratorMP3 *mp3;
+      AudioGeneratorAAC *format;
+      //AudioGeneratorFLAC *flac;
+
       //AudioOutputI2SNoDAC *output;
       AudioOutputI2S *output;
       String actualTrack = "";
@@ -31,7 +37,7 @@ class Mp3Player
       
       
       void debugPrint(String message);
-      bool cardExists = false, notPlaying = true, ready = true;
+      bool cardExists = false, notPlaying = true;
       
       Mp3Player(){};
       Mp3Player(bool debug)

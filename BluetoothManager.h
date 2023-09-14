@@ -6,13 +6,13 @@
 #include <SPI.h>
 #include <Ticker.h>
 #include "mp3Player.h"
+
 #define COMMAND_LENGTH 5
 #define SIZE 515
 
 class BluetoothManager{
   private:
-    const String nameFile = "/record.mp3";
-    
+    const String nameFile = "/record.aac";
     BluetoothSerial SerialBT;
     File file;
     int lastPacket = 0;
@@ -31,14 +31,13 @@ class BluetoothManager{
     bool passiveMode = false;
     bool downloadMode = false;
     
-
     void handleCommand(String command);
     
     void retrieveFile();
     int getNumberFromFrame(byte *buffer, int count);
     void processingData(int count);
-    //bool checkTheFinalPackage(int cnt);|
     void writeInformation(int count);
+    void closeBluetoothConnection();
 
   public:
     Mp3Player player = Mp3Player(true);

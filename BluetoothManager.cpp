@@ -7,7 +7,7 @@ void BluetoothManager::initializeSD(){
     player.cardExists = true;
   }
   player.initializeOut(26, 25, 27);
-  player.setTrackToPlay("/tracks/initial.mp3", 1); //reproducir audio
+  //player.setTrackToPlay("/tracks/initial.aac", 1); //reproducir audio
 }
 
 void BluetoothManager::openFile(){
@@ -19,7 +19,7 @@ void BluetoothManager::openFile(){
 
 void BluetoothManager::startBluetooth(){
   SerialBT.begin("ESP32_FTP");
-  Serial.write(&"El dispositivo está listo para emparejar"[0]);
+  Serial.write(&"\nEl dispositivo está listo para emparejar\n"[0]);
 }
 
 int BluetoothManager::getNumberFromFrame(byte *buffer, int count){
@@ -48,18 +48,6 @@ int BluetoothManager::getNumberFromFrame(byte *buffer, int count){
 
   return -1;
 }
-
-// bool BluetoothManager::checkTheFinalPackage(int cnt){
-//   if(cnt > 0){
-//     for(int i = 0; i < cnt; i++){
-//       if(dataBuffer[i] == 'F' && dataBuffer[i+1] == 'T' && dataBuffer[i+2] == '-' && dataBuffer[i+3] == 'S' && dataBuffer[i+4] == '*'){
-//         lastPacket = 0;
-//         return true;
-//       }
-//     }
-//   }
-//   return false;
-// }
 
 void BluetoothManager::writeInformation(int count){
   for (int i = 0; i < count; i++) {
@@ -108,6 +96,11 @@ void BluetoothManager::check(){
   BluetoothManager::sendMsg = true;
 }
 
+void BluetoothManager::closeBluetoothConnection(){
+  SerialBT.end();
+  startBluetooth();
+}
+
 void BluetoothManager::handleFileData() {
   memset(dataBuffer, 0, SIZE); // Limpiar el buffer
   byteCount = 0; // Resetear el contador
@@ -123,6 +116,7 @@ void BluetoothManager::handleFileData() {
         file.close();
         isOpen = false;
         sender.detach();
+        closeBluetoothConnection();
         player.setTrackToPlay(nameFile, 1); //reproducir audio
         return;
       }

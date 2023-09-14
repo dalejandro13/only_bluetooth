@@ -1,7 +1,10 @@
 #include "BluetoothManager.h"
 #include "mp3Player.h"
+#include "BluetoothSink.h"
 
+//BluetoothSink bluetoothSink;
 BluetoothManager bt;
+String data = String();
 
 void setup() {
   // put your setup code here, to run once:
@@ -9,10 +12,28 @@ void setup() {
   bt.startBluetooth();
   bt.initializeSD();
   //bt.openFile();
+
+  //bluetoothSink.setupBluetoothSink(); //este todavia no funciona
+}
+
+void serialCommunication(){
+  while(Serial.available() > 0){
+    char c = Serial.read();
+    data += c;
+    delay(3);
+  }
+  if(data != ""){
+    if(data.compareTo("play") == 0)
+      bt.player.setTrackToPlay("/tracks/initial.aac", 1);
+    
+    data = String();
+  }
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
+  serialCommunication();
+
   if(!bt.player.notPlaying)
     bt.player.playAudio();
 

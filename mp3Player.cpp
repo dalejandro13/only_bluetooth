@@ -20,7 +20,7 @@ void Mp3Player::initializeOut(int bclkPin, int wclkPin, int doutPin)
   output->SetBitsPerSample(16);
   output->SetChannels(2);
   output->SetRate(DEFAULT_SAMPLE_RATE);
-  volumeControl(1.0);
+  volumeControl(0.2);
 }
 
 void Mp3Player::volumeControl(float value){
@@ -29,9 +29,11 @@ void Mp3Player::volumeControl(float value){
 
 void Mp3Player::initializeMp3()
 {
-  mp3 = new AudioGeneratorMP3();
+  //format = new AudioGeneratorMP3();
+  //format = new AudioGeneratorFLAC();
+  format = new AudioGeneratorAAC();
   debugPrint("AudioGeneratorMP3 initialized");
-  if (mp3->begin(file, output)){
+  if (format->begin(file, output)){
     notPlaying = false;
     debugPrint("Play started");
   }
@@ -41,31 +43,36 @@ void Mp3Player::initializeMp3()
 
 void Mp3Player::initializeAudioFile()
 {
-  debugPrint("Reading file from SD: " + actualTrack);
+  debugPrint("Reading file from SD: " + actualTrack + "\n");
   String filePath = actualTrack;
   file = new AudioFileSourceSD(filePath.c_str());
+  // if(file->isOpen()){
+  //   int size = file->getSize();
+  //   Serial.print("tamaño: ");
+  //   Serial.println(String(size));
+  // }
 }
 
 void Mp3Player::stop()
 {
   if (file)
   {
-    mp3->stop();
-    delete mp3;
+    format->stop();
+    delete format;
     delete file;
     file = nullptr;
-    mp3 = nullptr;
+    format = nullptr;
     debugPrint("Resources released");
   }
 }
 
 void Mp3Player::playAudio()
 {
-  if (cardExists && mp3 != NULL && file != NULL && ready)
+  if (cardExists && format != NULL && file != NULL)
   {
-    if (mp3->isRunning())
+    if (format->isRunning())
     {
-      if (!mp3->loop())
+      if (!format->loop())
       {
         debugPrint("MP3 Resource Finished");
         stop();
@@ -92,6 +99,7 @@ void Mp3Player::initializeTrack()
   {
     initializeAudioFile();
     initializeMp3();
+    notPlaying = false;
   }
   else
   {
@@ -100,7 +108,7 @@ void Mp3Player::initializeTrack()
 }
 
 void Mp3Player::setTrackToPlay(String trackName, int iterations){
-  notPlaying = false;
+  //notPlaying = false;
   actualTrack = trackName;
   playItarations = iterations;
   initializeTrack();
