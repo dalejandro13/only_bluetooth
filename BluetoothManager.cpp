@@ -7,7 +7,7 @@ void BluetoothManager::initializeSD(){
     player.cardExists = true;
   }
   player.initializeOut(26, 25, 27);
-  //player.setTrackToPlay("/tracks/initial.aac", 1); //reproducir audio
+  player.setTrackToPlay("/tracks/initial.mp3", 1); //reproducir audio
 }
 
 void BluetoothManager::openFile(){

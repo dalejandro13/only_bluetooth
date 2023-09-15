@@ -12,7 +12,7 @@
 
 class BluetoothManager{
   private:
-    const String nameFile = "/record.aac";
+    const String nameFile = "/record.mp3";
     BluetoothSerial SerialBT;
     File file;
     int lastPacket = 0;

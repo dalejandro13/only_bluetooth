@@ -5,8 +5,8 @@
 //#include <AudioOutputI2SNoDAC.h>
 #include <AudioOutputI2S.h>
 
-//#include <AudioGeneratorMP3.h>
-#include "AudioGeneratorAAC.h"
+#include <AudioGeneratorMP3.h>
+//#include "AudioGeneratorAAC.h"
 //#include "AudioGeneratorFLAC.h"
 
 #define DEFAULT_SAMPLE_RATE 44100
@@ -18,8 +18,8 @@ class Mp3Player
   private:
       String printFormat = "[MP3]: ";
       AudioFileSourceSD *file;
-      //AudioGeneratorMP3 *mp3;
-      AudioGeneratorAAC *format;
+      AudioGeneratorMP3 *format;
+      //AudioGeneratorAAC *format;
       //AudioGeneratorFLAC *flac;
 
       //AudioOutputI2SNoDAC *output;

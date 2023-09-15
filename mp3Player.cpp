@@ -20,7 +20,7 @@ void Mp3Player::initializeOut(int bclkPin, int wclkPin, int doutPin)
   output->SetBitsPerSample(16);
   output->SetChannels(2);
   output->SetRate(DEFAULT_SAMPLE_RATE);
-  volumeControl(0.2);
+  volumeControl(1.0);
 }
 
 void Mp3Player::volumeControl(float value){
@@ -29,9 +29,9 @@ void Mp3Player::volumeControl(float value){
 
 void Mp3Player::initializeMp3()
 {
-  //format = new AudioGeneratorMP3();
+  format = new AudioGeneratorMP3();
   //format = new AudioGeneratorFLAC();
-  format = new AudioGeneratorAAC();
+  //format = new AudioGeneratorAAC();
   debugPrint("AudioGeneratorMP3 initialized");
   if (format->begin(file, output)){
     notPlaying = false;

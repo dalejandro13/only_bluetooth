@@ -1,6 +1,5 @@
 #include "BluetoothManager.h"
 #include "mp3Player.h"
-#include "BluetoothSink.h"
 
 //BluetoothSink bluetoothSink;
 BluetoothManager bt;
@@ -12,8 +11,6 @@ void setup() {
   bt.startBluetooth();
   bt.initializeSD();
   //bt.openFile();
-
-  //bluetoothSink.setupBluetoothSink(); //este todavia no funciona
 }
 
 void serialCommunication(){
